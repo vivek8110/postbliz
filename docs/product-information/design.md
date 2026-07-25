@@ -79,8 +79,8 @@ Spend the boldness here. Everything else stays quiet.
   --p-tiktok:    #010101;
 
   /* ── type ────────────────────────────────────── */
-  --font-ui:   "Instrument Sans", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-ui:   "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
 
   --text-xs:   0.75rem;   /* 12 — mono metadata */
   --text-sm:   0.8125rem; /* 13 — labels */
@@ -126,11 +126,14 @@ class strategy.
 
 ### Typography
 
-**Instrument Sans** (UI) — geometric with enough eccentricity to not read as Inter. Weights 400/500/600.
-**JetBrains Mono** (data) — timestamps, handles, char counts, platform labels, IDs, the rail's time
+**Geist** (UI) — Vercel's developer-tool sans. Precise and quiet, engineered rather than marketed; it
+reads like the founder's own tooling, not a marketing site. Weights 400/500/600.
+**Geist Mono** (data) — timestamps, handles, char counts, platform labels, IDs, the rail's time
 markers. Mono is the developer vernacular; using it for real data rather than decoration is the point.
+Geist and Geist Mono are a designed-together superfamily, so UI and data harmonise.
 
-Both free on Google Fonts.
+Self-hosted via `next/font` — the Geist families ship with the Next.js scaffold. No CDN, no layout
+shift, GDPR-clean. Matters for a public/self-host repo.
 
 **Post previews use platform-native stacks** — the preview must look like the platform, not like
 Postbliz. `-apple-system` for X, `system-ui` for LinkedIn, `IBM Plex Sans`/system for Reddit.
@@ -295,7 +298,7 @@ anything. Sources panel with poll status.
 > Highlighter yellow `#FFE566` used **only** as a wash behind posts needing review, nowhere else.
 > States: queued `#5B6BF0`, published `#2F8F5B`, held `#C77700`, failed `#C63737`.
 >
-> **Type:** Instrument Sans for UI, JetBrains Mono for all data — timestamps, handles, character
+> **Type:** Geist for UI, Geist Mono for all data — timestamps, handles, character
 > counts, platform labels. Post content is 17px, larger than any chrome, because the writing is the
 > material.
 >

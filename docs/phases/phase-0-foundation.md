@@ -54,8 +54,8 @@ no auth, no features.
    bg-ink need that namespace, and @theme INLINE keeps the var() indirection
    so colours flip under the media query (plain @theme bakes the value and
    won't). "Do not invent tokens" governs the raw values; the --color-* names
-   are Tailwind's required mapping, not new tokens. Add Instrument Sans and
-   JetBrains Mono via next/font.
+   are Tailwind's required mapping, not new tokens. Add the Geist and Geist
+   Mono families via next/font.
 
 5. shadcn/ui init, configured against those tokens. Then REMOVE the
    @custom-variant dark (&:is(.dark *)) line its init adds, and put any
