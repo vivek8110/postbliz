@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { ANALYTICS, capture } from "@/lib/observability/analytics";
 
 const input =
   "rounded-lg border border-rule bg-paper px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none";
@@ -29,6 +30,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       setError(res.error.message ?? "That didn't work. Check your details and try again.");
       return;
     }
+    if (isSignUp) capture(ANALYTICS.signup, { method: "email" });
     router.push("/app");
     router.refresh();
   }
