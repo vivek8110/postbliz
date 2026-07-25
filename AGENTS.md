@@ -1,5 +1,9 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Agent & contributor guide
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+Everything an agent or contributor needs to know about this project lives in
+**[CLAUDE.md](CLAUDE.md)** — hard rules, stack, conventions, domain language,
+and links to the detailed docs. It is the single source of truth; read it first.
+
+> Note: this repo uses **Next.js 16** (App Router, Turbopack). Some APIs differ
+> from older Next.js — check `CLAUDE.md` and the official Next.js 16 docs rather
+> than assuming v13–15 behavior.

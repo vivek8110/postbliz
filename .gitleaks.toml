@@ -1,0 +1,11 @@
+title = "Postbliz gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "The Sentry scrubber and its test intentionally contain secret-shaped strings (redaction patterns and fake fixtures) — never real secrets."
+paths = [
+  '''lib/observability/scrub\.ts''',
+  '''lib/observability/scrub\.test\.ts''',
+]
