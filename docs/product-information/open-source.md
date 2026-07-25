@@ -88,8 +88,8 @@ postbliz/
 ├── lib/
 │   ├── agents/                prompts live here, public
 │   ├── platforms/
-│   ├── reddit/                the safety engine, public
-│   └── db/
+│   └── reddit/                the safety engine, public
+├── db/                        schema + queries (root, not under lib/)
 ├── trigger/
 └── components/
 ```

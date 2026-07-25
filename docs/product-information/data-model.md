@@ -24,7 +24,7 @@ user
 ## Conventions
 
 - Tables `snake_case` plural. Drizzle exports `camelCase`.
-- Every table: `id` (uuid v7 for sortability), `created_at`, `updated_at`.
+- Every table: `id` (uuid v7 via native `uuidv7()` for sortability), `created_at`, `updated_at`.
 - Every user-scoped table carries `user_id` even when reachable via a parent — enables a single
   scoped-query helper and prevents cross-tenant leaks.
 - Timestamps `timestamptz`, always UTC in the DB. Convert at the edge to the user's IANA zone.
@@ -37,6 +37,7 @@ user
 
 ```ts
 // db/schema.ts
+import { sql } from "drizzle-orm";
 import {
   pgTable, pgEnum, text, timestamp, integer, boolean,
   jsonb, uuid, index, uniqueIndex, real, vector,
@@ -84,7 +85,7 @@ export const channelHealthEnum = pgEnum("channel_health", [
 // Do not hand-write them; use its Drizzle adapter.
 
 export const projects = pgTable("projects", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
   url: text("url").notNull(),
@@ -98,7 +99,7 @@ export const projects = pgTable("projects", {
 /* ─── understanding the product ─────────────────────────── */
 
 export const brandProfiles = pgTable("brand_profiles", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
 
@@ -119,7 +120,7 @@ export const brandProfiles = pgTable("brand_profiles", {
 
 // The "memory file" — fetched once, cached, refreshed monthly. NEVER per post.
 export const voiceProfiles = pgTable("voice_profiles", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
 
@@ -146,7 +147,7 @@ export const voiceProfiles = pgTable("voice_profiles", {
 /* ─── sources & knowledge ───────────────────────────────── */
 
 export const sources = pgTable("sources", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   type: sourceTypeEnum("type").notNull(),
@@ -160,7 +161,7 @@ export const sources = pgTable("sources", {
 
 // One discrete, checkable fact. Rule 6: no post exists without one of these.
 export const knowledgeItems = pgTable("knowledge_items", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   sourceId: uuid("source_id").references(() => sources.id, { onDelete: "set null" }),
   userId: text("user_id").notNull(),
@@ -184,7 +185,7 @@ export const knowledgeItems = pgTable("knowledge_items", {
 /* ─── channels & scheduling ─────────────────────────────── */
 
 export const channels = pgTable("channels", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   platform: platformEnum("platform").notNull(),
@@ -217,7 +218,7 @@ export const channels = pgTable("channels", {
 ]);
 
 export const schedules = pgTable("schedules", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   channelId: uuid("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   daysOfWeek: jsonb("days_of_week").$type<number[]>().notNull().default([1,2,3,4,5]), // 0=Sun
@@ -229,7 +230,7 @@ export const schedules = pgTable("schedules", {
 /* ─── ideas → drafts → scheduled posts ──────────────────── */
 
 export const ideas = pgTable("ideas", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   angle: text("angle").notNull(),
@@ -241,7 +242,7 @@ export const ideas = pgTable("ideas", {
 }, (t) => [index("ideas_project_idx").on(t.projectId)]);
 
 export const drafts = pgTable("drafts", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   ideaId: uuid("idea_id").references(() => ideas.id, { onDelete: "set null" }),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
@@ -264,7 +265,7 @@ export const drafts = pgTable("drafts", {
 }, (t) => [index("drafts_project_status_idx").on(t.projectId, t.status)]);
 
 export const scheduledPosts = pgTable("scheduled_posts", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   draftId: uuid("draft_id").notNull().references(() => drafts.id, { onDelete: "cascade" }),
   channelId: uuid("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
   projectId: uuid("project_id").notNull(),
@@ -294,7 +295,7 @@ export const scheduledPosts = pgTable("scheduled_posts", {
 /* ─── reddit ────────────────────────────────────────────── */
 
 export const subredditTargets = pgTable("subreddit_targets", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),            // without r/
@@ -315,7 +316,7 @@ export const subredditTargets = pgTable("subreddit_targets", {
 
 // Every gate run, pass or fail. Audit trail + the UI explanation.
 export const safetyChecks = pgTable("safety_checks", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   scheduledPostId: uuid("scheduled_post_id").notNull()
     .references(() => scheduledPosts.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
@@ -328,7 +329,7 @@ export const safetyChecks = pgTable("safety_checks", {
 /* ─── attribution ───────────────────────────────────────── */
 
 export const links = pgTable("links", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   slug: text("slug").notNull(),
@@ -339,7 +340,7 @@ export const links = pgTable("links", {
 }, (t) => [uniqueIndex("links_slug_idx").on(t.slug)]);
 
 export const linkClicks = pgTable("link_clicks", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   linkId: uuid("link_id").notNull().references(() => links.id, { onDelete: "cascade" }),
   clickedAt: timestamp("clicked_at", { withTimezone: true }).notNull().defaultNow(),
   country: text("country"),
@@ -350,7 +351,7 @@ export const linkClicks = pgTable("link_clicks", {
 /* ─── billing & limits ──────────────────────────────────── */
 
 export const subscriptions = pgTable("subscriptions", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   userId: text("user_id").notNull(),
   dodoSubscriptionId: text("dodo_subscription_id"),
   dodoCustomerId: text("dodo_customer_id"),
@@ -363,7 +364,7 @@ export const subscriptions = pgTable("subscriptions", {
 
 // Rolling monthly counters. Enforce limits AND watch COGS.
 export const usageCounters = pgTable("usage_counters", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   userId: text("user_id").notNull(),
   projectId: uuid("project_id"),
   periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
@@ -382,6 +383,21 @@ export const usageCounters = pgTable("usage_counters", {
 **`vector` columns** need `CREATE EXTENSION vector;` on Neon — supported, enable it in the first
 migration. Used for 90-day dedupe of ideas and knowledge items. An IVFFlat index is unnecessary
 below ~100k rows.
+
+**`id` defaults — `uuidv7()`.** Every `id` uses `.default(sql`uuidv7()`)`. Postgres 18 ships a native
+`uuidv7()` and Neon runs PG18, so IDs are time-sortable with no extension and no JS library. Do
+**not** import `Bun.randomUUIDv7` into this file — `drizzle-kit` runs under Node and can't resolve
+`"bun"`. For a pre-18 local Postgres, fall back to an app-side default: `.$defaultFn(() => uuidv7())`
+from the `uuid` npm package.
+
+**Tenancy has no FK.** `user_id` is `text` with no foreign key to BetterAuth's `users` table — the app
+schema (Task 0.2) migrates before BetterAuth's tables exist (Task 0.3). Tenant integrity is enforced
+by `db/scoped.ts`, which forces a `user_id` filter on every user-scoped query, not by a DB constraint.
+
+**`link_clicks` is the one table with no `user_id`.** It's public visitor traffic reached via
+`link → project`, so `db/scoped.ts` must expose an explicit opt-out for it (and any future non-tenant
+table) rather than forcing a bogus `user_id`. It is the documented exception to "every user-scoped
+table carries `user_id`."
 
 **`idempotencyKey`** format: `{scheduledPostId}:{channelId}:{attempt-independent}`. It must **not**
 include the attempt number, or retries would generate new keys and defeat the whole mechanism.

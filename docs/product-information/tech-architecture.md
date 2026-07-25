@@ -176,9 +176,12 @@ retry and will arrive twice.
 ## Environment variables
 
 ```
-DATABASE_URL                Neon
+DATABASE_URL                Neon — POOLED connection string (app runtime)
+DATABASE_URL_UNPOOLED       Neon — DIRECT connection string (drizzle-kit migrations)
 BETTER_AUTH_SECRET
 BETTER_AUTH_URL
+GOOGLE_CLIENT_ID            Google OAuth — BetterAuth social sign-in
+GOOGLE_CLIENT_SECRET
 ENCRYPTION_KEY              32-byte, base64. Rotating this invalidates all stored tokens
 TRIGGER_SECRET_KEY
 FIRECRAWL_API_KEY
@@ -191,6 +194,7 @@ R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET
 RESEND_API_KEY
 DODO_API_KEY / DODO_WEBHOOK_SECRET
 NEXT_PUBLIC_POSTHOG_KEY
+NEXT_PUBLIC_POSTHOG_HOST    us.i.posthog.com or eu.i.posthog.com — must match the project region
 SENTRY_DSN
 SHORTLINK_DOMAIN
 ```

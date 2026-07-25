@@ -114,6 +114,16 @@ Spend the boldness here. Everything else stays quiet.
 }
 ```
 
+### Tailwind v4 integration
+
+These tokens are the source of truth; Tailwind consumes them without duplicating them. Map the raw
+vars into Tailwind's `--color-*` namespace inside an **`@theme inline`** block (`--color-ink:
+var(--ink)`), not a plain `@theme` — plain `@theme` bakes the value at build time and won't flip under
+the `prefers-color-scheme` block above. Keep dark mode on `prefers-color-scheme` only — do not add
+shadcn's `.dark`-class variant, so one mechanism drives both variable recoloring and `dark:`
+utilities. Trade-off: no manual light/dark toggle; adding one later means switching wholesale to the
+class strategy.
+
 ### Typography
 
 **Instrument Sans** (UI) — geometric with enough eccentricity to not read as Inter. Weights 400/500/600.
