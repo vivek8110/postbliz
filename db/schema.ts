@@ -15,6 +15,9 @@ import {
   jsonb, uuid, index, uniqueIndex, real, vector,
 } from "drizzle-orm/pg-core";
 
+// BetterAuth's tables (user/session/account/verification) — owned by its adapter.
+export * from "./auth-schema";
+
 /* ─── enums ─────────────────────────────────────────────── */
 
 export const platformEnum = pgEnum("platform", [
