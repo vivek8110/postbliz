@@ -13,7 +13,7 @@ export async function createProject(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const url = String(formData.get("url") ?? "").trim();
   const timezone = String(formData.get("timezone") ?? "UTC").trim() || "UTC";
-  if (!name || !url) redirect("/app/new?error=missing");
+  if (!name || !url) redirect("/new?error=missing");
 
   await db.insert(projects).values({ userId: session.user.id, name, url, timezone });
   redirect("/app");

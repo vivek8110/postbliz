@@ -1,4 +1,8 @@
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { createProject } from "./actions";
+import { TimezoneField } from "./timezone-field";
 
 const input =
   "rounded-lg border border-rule bg-paper px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none";
@@ -9,11 +13,13 @@ export default async function NewProjectPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/sign-in");
   const { error } = await searchParams;
 
   return (
-    <div className="mx-auto max-w-md">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">Create your first project</h1>
+    <div className="w-full max-w-md rounded-lg border border-rule bg-paper-raised p-6">
+      <h1 className="text-xl font-semibold tracking-tight text-ink">Create your project</h1>
       <p className="mt-1 text-sm text-ink-muted">One product you want to promote.</p>
 
       <form action={createProject} className="mt-5 flex flex-col gap-3">
@@ -27,7 +33,7 @@ export default async function NewProjectPage({
         </label>
         <label className={label}>
           Timezone
-          <input name="timezone" defaultValue="UTC" placeholder="UTC" className={input} />
+          <TimezoneField className={input} />
         </label>
         {error === "missing" && <p className="text-sm text-failed">Name and product URL are required.</p>}
         <button type="submit" className="rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-accent-hover">
