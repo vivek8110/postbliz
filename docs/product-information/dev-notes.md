@@ -33,6 +33,9 @@ new class of small issue appears.
   shells.
 - **Verify features in the running app, not just types.** Typecheck passing ≠
   working. Drive the real flow.
+- **Never `rm -rf .next` while the dev server is running.** It corrupts
+  Turbopack's on-disk cache (`TurbopackInternalError: Failed to lookup task
+  ids`) and the app renders blank. Stop the server first, then clear.
 
 ---
 
