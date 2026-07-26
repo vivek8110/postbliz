@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "thin_content" boolean DEFAULT false NOT NULL;

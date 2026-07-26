@@ -92,6 +92,7 @@ export const projects = pgTable("projects", {
   timezone: text("timezone").notNull().default("UTC"), // IANA
   isActive: boolean("is_active").notNull().default(true),
   autopilot: boolean("autopilot").notNull().default(false),
+  thinContent: boolean("thin_content").notNull().default(false), // crawl median specificity < 0.5 → prompt for a brain dump
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index("projects_user_idx").on(t.userId)]);

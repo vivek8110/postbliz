@@ -60,6 +60,9 @@ export const projects = pgTable("projects", {
   timezone: text("timezone").notNull().default("UTC"), // IANA
   isActive: boolean("is_active").notNull().default(true),
   autopilot: boolean("autopilot").notNull().default(false),
+  // Set when a crawl's median fact specificity is below 0.5 — onboarding prompts
+  // for a brain dump instead of shipping mediocre output.
+  thinContent: boolean("thin_content").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index("projects_user_idx").on(t.userId)]);

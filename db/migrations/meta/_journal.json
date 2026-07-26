@@ -15,6 +15,13 @@
       "when": 1784976182054,
       "tag": "0001_fresh_mathemanic",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785055372580,
+      "tag": "0002_magical_cable",
+      "breakpoints": true
     }
   ]
 }

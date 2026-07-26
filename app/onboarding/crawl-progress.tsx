@@ -21,6 +21,7 @@ type Meta = {
   error?: string;
   warning?: string;
   profile?: Profile;
+  factsExtracted?: number;
 };
 
 function Card({ children }: { children: React.ReactNode }) {
@@ -85,6 +86,9 @@ export function CrawlProgress({ runId, accessToken }: { runId: string; accessTok
         <div className="font-mono text-xs uppercase tracking-wide text-published">✓ Done</div>
         <h1 className="mt-1 text-xl font-semibold tracking-tight text-ink">Here&apos;s what we understood</h1>
         <p className="mt-1 text-sm text-ink-muted">Everything here is editable later — check it&apos;s right.</p>
+        {typeof md.factsExtracted === "number" && (
+          <p className="mt-2 font-mono text-xs text-published">{md.factsExtracted} facts extracted</p>
+        )}
         <div className="mt-4">
           <Row label="What it does" value={p.whatItDoes} />
           <Row label="Who it's for" value={p.whoItsFor} />
@@ -106,11 +110,13 @@ export function CrawlProgress({ runId, accessToken }: { runId: string; accessTok
   }
 
   const label =
-    status === "analyzing"
-      ? "Understanding what you built…"
-      : status === "crawling"
-        ? "Reading your site…"
-        : "Starting…";
+    status === "extracting"
+      ? "Pulling out the facts…"
+      : status === "analyzing"
+        ? "Understanding what you built…"
+        : status === "crawling"
+          ? "Reading your site…"
+          : "Starting…";
 
   return (
     <Card>
