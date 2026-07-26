@@ -271,19 +271,23 @@ adding BetterAuth plugins.
 
 ---
 
-## D19 — Sentry init-only, no `withSentryConfig` (yet)
+## D19 — Sentry via `withSentryConfig`, source-map upload deferred
 
-**Decided:** Sentry wired via instrumentation files plus a `beforeSend` secret scrubber only.
+**Decided:** wrap `next.config` with `withSentryConfig` (source-map upload disabled), plus the
+instrumentation files and the `beforeSend` secret scrubber.
 
-**Rejected:** the full wizard setup with source-map upload.
+**Rejected:** init-only without `withSentryConfig` (tried first — it breaks) · the full setup with
+source-map upload (deferred — needs a `SENTRY_AUTH_TOKEN`).
 
-**Why:** init-only captures errors and applies the scrubber (the Phase 0 requirement) without risking
-the Turbopack build or needing a `SENTRY_AUTH_TOKEN`. Source-map upload is a later, low-risk add.
+**Why:** init-only looked lighter, but under Turbopack the Sentry Node SDK's `require-in-the-middle`
+instrumentation isn't externalised and the dev server fails to load the instrumentation hook
+(`Cannot find module require-in-the-middle-…`). `withSentryConfig` is the sanctioned wrapper that
+wires this correctly for Turbopack. Source-map upload stays off until there's an auth token — low
+value in dev.
 
-**Would change if:** production stack traces are unreadable without source maps — add `withSentryConfig`
-and the auth token then.
+**Would change if:** production stack traces are unreadable — add the auth token and enable source maps.
 
-**Date:** 2026-07-25
+**Date:** 2026-07-26 (revised — init-only broke dev under Turbopack)
 
 ---
 
