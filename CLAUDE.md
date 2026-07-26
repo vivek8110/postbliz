@@ -34,6 +34,22 @@ put it in the right doc under `docs/product-information/` and link to it.
 | [`open-source.md`](docs/product-information/open-source.md) | Repo structure, license, what's public, self-host |
 | [`risk-register.md`](docs/product-information/risk-register.md) | Before committing to anything with a platform dependency |
 | [`decisions.md`](docs/product-information/decisions.md) | **Why** something is the way it is. Append here when you decide something |
+| [`dev-notes.md`](docs/product-information/dev-notes.md) | **Before implementing anything.** Recurring gotchas + the auto-handle checklist |
+
+---
+
+## Local dev — always apply
+
+Handle these without being told (full list + why: [`dev-notes.md`](docs/product-information/dev-notes.md)).
+
+- **Serve on `:3000`.** `BETTER_AUTH_URL` and Google's redirect URI are `:3000`. Kill stray dev
+  servers; never leave one running. If Next bounces to `:3001`, OAuth callbacks break.
+- **Trigger.dev needs two terminals in dev:** `bun run dev` + `bunx trigger.dev@<pinned> dev`.
+  Without the worker, tasks enqueue but never run — the UI hangs "in progress".
+- **One env file (`.env`).** Normalise line endings after edits (`sed -i 's/\r$//' .env` — a stray
+  CRLF corrupts values). Client-exposed vars need `NEXT_PUBLIC_`.
+- **Replace scaffold defaults** in any area you touch, and verify features in the running app, not
+  just typecheck.
 
 ---
 
